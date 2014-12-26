@@ -74,6 +74,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="LSM9DS0_AHRS.h" />
+    <ClInclude Include="qc_data.h" />
     <ClInclude Include="qc_dataTypes.h" />
     <ClInclude Include="qc_gps.h" />
     <ClInclude Include="qc_imu.h" />
@@ -86,6 +87,7 @@
     <ClInclude Include="Visual Micro\.qc2.vsarduino.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="qc_data.cpp" />
     <ClCompile Include="qc_gps.cpp" />
     <ClCompile Include="LSM9DS0_AHRS.cpp" />
     <ClCompile Include="qc_imu.cpp" />

@@ -21,7 +21,7 @@ uint16_t wifi_setup() {
 	writeMsgIndex = 0;
 	readMsgIndex = 0;
 
-	Serial.println("WIFI: Begin");
+	Serial.println("WIFI: Initializing...");
 	if (!wifi.begin()) {
 		Serial.println("WIFI: Failure to start");
 		return -1;
@@ -29,6 +29,7 @@ uint16_t wifi_setup() {
 
 	Serial.println("WIFI: Connect to ap");
 	if (!wifi.connectToAP(WLAN_SSID, WLAN_PASS, WLAN_SECURITY)) {
+		Serial.println("WIFI: Failure to connect to ap");
 		return -2;
 	}
 
@@ -42,7 +43,7 @@ uint16_t wifi_setup() {
 	Serial.println("WIFI: connect");
 	connection = wifi.connectTCP(ip, 4242);
 
-	Serial.println("WIFI: connected");
+	Serial.println("WIFI: Ready!");
 	return 1;
 }
 

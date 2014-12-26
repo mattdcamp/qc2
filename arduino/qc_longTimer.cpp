@@ -1,4 +1,3 @@
-#include <ChibiOS_ARM\ChibiOS_ARM.h>
 #include <Arduino.h>
 #include <math.h>
 

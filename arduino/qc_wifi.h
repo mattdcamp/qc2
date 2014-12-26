@@ -5,9 +5,9 @@
 #define WLAN_SECURITY   WLAN_SEC_WPA2
 
 // Pin setup for the wifi
-#define WIFI_IRQ   23
-#define WIFI_VBAT  24
-#define WIFI_CS    22
+#define WIFI_IRQ   24
+#define WIFI_VBAT  22
+#define WIFI_CS    26
 
 #define IDLE_TIMEOUT_MS  3000
 
