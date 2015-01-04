@@ -2,8 +2,8 @@
 #include <stdint.h>
 
 #include "LSM9DS0_AHRS.h"
-#include "qc_dataTypes.h" 
 #include "qc_data.h"
+#include "qc_logger.h"
 #include "Average.h"
 
 #include "qc_imu.h"
@@ -17,40 +17,46 @@ static LSM9DS0_AHRS* ahrs;
 
 static uint32_t getDeltaTime();
 static void imuUpdate();
+static void imuUpdateTime(float dt);
 static void pushSampleToBuffer(qc_attitude_t newSample);
 
 void imu_setup() {
-	Serial.println("IMU: Initializing");
+	logger_println("IMU: Initializing...", QC_LOG_INFO);
 
 	lastUpdate = 0.0f;
 
 	ahrs = new LSM9DS0_AHRS();
-
-	Serial.println("IMU: Init Samples");
-	for (uint8_t i = 0; i < QC_IMU_SAMPLES*5; i++) {
-		imuUpdate();
-		delay(QC_IMU_MS);
-	}
-	Serial.println("IMU: Ready!");
+	
+	logger_println("IMU: Ready!", QC_LOG_INFO);
 }
 
 msg_t imu_thread_method(void *arg) {
+	chRegSetThreadName("IMU");
 	while (!chThdShouldTerminate()) {
+		logger_println("IMU: Start", QC_LOG_VERBOSE);
 		imuUpdate();
+		logger_println("IMU: End", QC_LOG_VERBOSE);
 		chThdSleepMilliseconds(QC_IMU_MS);
 	}
+	logger_println("IMU: Exiting THREAD", QC_LOG_ERROR);
 }
 
 static void imuUpdate() {
 	float dt = (float)getDeltaTime() * 0.001f;
-	
+	imuUpdateTime(dt);
+}
+
+static void imuUpdateTime(float dt) {
 	ahrs->update(dt);
+
+	logger_print("IMU: Update Sample. Delta Time: ", QC_IMU_LOG_LEVEL);
+	logger_strPrintln(String(dt, 5), QC_IMU_LOG_LEVEL);
 
 	qc_attitude_t attitude;
 	attitude.pitch = -ahrs->pitch;
 	attitude.roll = ahrs->roll;
 	attitude.heading = ahrs->yaw;
-	
+
 	pushSampleToBuffer(attitude);
 	setAttitude(pitchAvg.mean(), rollAvg.mean(), headingAvg.mean());
 }

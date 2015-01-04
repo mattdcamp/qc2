@@ -5,6 +5,7 @@
                 pitch: 0,
                 roll: 0,
                 heading: 0,
+                height: 0,
                 time: 0
             }
         }),

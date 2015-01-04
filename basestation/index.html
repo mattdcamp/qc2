@@ -11,12 +11,16 @@
     <style>
         body {
             padding-top: 50px;
-        }
-        .graphs {
             padding: 40px 15px;
+        }
+        #viewContainer {
+            margin-top: 24px;
         }
         .graphContainer {
             height: 600px;
+        }
+        .sensor, .sensorHeading  {
+            text-align: center;
         }
     </style>
 
@@ -30,7 +34,64 @@
     <script type="text/javascript" src="bower_components/bootstrap/dist/js/bootstrap.js"></script>
     <script type="text/javascript" src="bower_components/highcharts-release/highcharts.src.js"></script>
     <script type="text/javascript" src="bower_components/jquery-flight-indicators/js/jquery.flightindicators.js"></script>
+    <script type="text/javascript" src="bower_components/handlebars/handlebars.js"></script>
     
+    <script id="commanderTemplate" type="text/x-handlebars-template">
+        <form id="commanderForm">
+            <div class="row">
+                <div class="col-xs-12 col-sm-4 sensorContainer">
+                    <div id="attitudeSensor" class="sensor"></div>
+                    <h3 class="sensorHeading">Attitude (Pitch/Roll)</h3>
+                    <div class="row">
+                        <div class="form-group col-xs-12 col-md-6">
+                            <label for="pitch">Pitch</label>
+                            <input type="text" class="form-control" id="pitch" name="pitch" placeholder="degrees">
+                        </div>
+                        <div class="form-group col-xs-12 col-md-6">
+                            <label for="roll">Roll</label>
+                            <input type="text" class="form-control" id="roll" name="roll" placeholder="degrees">
+                        </div>
+                    </div>
+                </div>
+                <div class="col-xs-12 col-sm-4 sensorContainer">
+                    <div id="headingSensor" class="sensor"></div>
+                    <h3 class="sensorHeading">Heading</h3>
+                    <label for="heading">Heading</label>
+                    <input type="text" class="form-control" id="heading" name="heading" placeholder="degrees">
+                </div>
+                <div class="col-xs-12 col-sm-4 sensorContainer">
+                    <div id="altitidueSensor" class="sensor"></div>
+                    <h3 class="sensorHeading">Altitude</h3>
+                    <div class="row">
+                        <div class="form-group col-xs-12 col-md-6">
+                            <label for="height">Altitude</label>
+                            <input type="text" class="form-control" id="height" name="height" placeholder="cm">
+                        </div>
+                        <div class="form-group col-xs-12 col-md-6">
+                            <label for="thurst">Thrust (%)</label>
+                            <input type="text" class="form-control" id="thrust" name="thrust" placeholder="%">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-xs-12">
+                    <button type="button" class="btn btn-primary" id="sendCmd">Send Command</button>
+                </div>
+            </div>
+        </form>
+    </script>
+    
+    <script type="text/javascript">
+         $(document).ready(function () {
+             Handlebars.templates = {};
+             var src = $('#commanderTemplate').html(),
+                template = Handlebars.compile(src);
+             Handlebars.templates.commander = template;
+        });
+    </script>
+    
+    <script type="text/javascript" src="models/commandModel.js"></script>
     <script type="text/javascript" src="models/attitudeModel.js"></script>
     <script type="text/javascript" src="models/gpsModel.js"></script> 
     <script type="text/javascript" src="controller/radio.js"></script>
@@ -53,19 +114,15 @@
             </div>
             <div id="navbar" class="collapse navbar-collapse">
                 <ul class="nav navbar-nav">
-                    <li class="active"><a href="#">Home</a>
-                    </li>
-                    <li><a href="#commander">Commander</a>
-                    </li>
-                    <li><a href="#charts">Charts</a>
-                    </li>
+                    <li id="charts" class="active"><a href="#">Charts</a></li>
+                    <li id="commander"><a href="#commander">Commander</a></li>
                 </ul>
             </div>
             <!--/.nav-collapse -->
         </div>
     </nav>
 
-    <div id="viewContainer" class="container">
+    <div id="viewContainer" class="container-fluid">
     </div>
 
 </body>

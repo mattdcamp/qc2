@@ -13,54 +13,84 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="Sensors">
+      <UniqueIdentifier>{c147148b-6ae3-4aaa-86da-79b9eb8e42f8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Control">
+      <UniqueIdentifier>{82d9ac67-f72c-4ae0-9acb-2907595f71c7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Communication">
+      <UniqueIdentifier>{5eb5c74e-46d9-418d-9a0c-4236b83ad820}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Lib">
+      <UniqueIdentifier>{421795fd-ddf1-47bd-bd13-863819d4d336}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Data">
+      <UniqueIdentifier>{c47ba4a1-f03d-4df7-b0d1-67ba9757e788}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="qc_imu.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="qc_wifi.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="qc_longTimer.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="LSM9DS0_AHRS.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Lib</Filter>
+    </ClCompile>
+    <ClCompile Include="qc_data.cpp">
+      <Filter>Data</Filter>
     </ClCompile>
     <ClCompile Include="qc_gps.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Sensors</Filter>
+    </ClCompile>
+    <ClCompile Include="qc_imu.cpp">
+      <Filter>Sensors</Filter>
+    </ClCompile>
+    <ClCompile Include="qc_longTimer.cpp">
+      <Filter>Control</Filter>
     </ClCompile>
     <ClCompile Include="qc_sysCtrl.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Control</Filter>
+    </ClCompile>
+    <ClCompile Include="qc_wifi.cpp">
+      <Filter>Communication</Filter>
+    </ClCompile>
+    <ClCompile Include="qc_sonar.cpp">
+      <Filter>Sensors</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="qc_dataTypes.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="qc_imu.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="qc_wifi.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Visual Micro\.qc2.vsarduino.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="qc_longTimer.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="LSM9DS0_AHRS.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="qc_gps.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="qc_sysCtrl.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Visual Micro\.arduino.vsarduino.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="LSM9DS0_AHRS.h">
+      <Filter>Lib</Filter>
+    </ClInclude>
+    <ClInclude Include="Average.h">
+      <Filter>Lib</Filter>
+    </ClInclude>
+    <ClInclude Include="qc_data.h">
+      <Filter>Data</Filter>
+    </ClInclude>
+    <ClInclude Include="qc_dataTypes.h">
+      <Filter>Data</Filter>
+    </ClInclude>
+    <ClInclude Include="qc_gps.h">
+      <Filter>Sensors</Filter>
+    </ClInclude>
+    <ClInclude Include="qc_imu.h">
+      <Filter>Sensors</Filter>
+    </ClInclude>
+    <ClInclude Include="qc_sysCtrl.h">
+      <Filter>Control</Filter>
+    </ClInclude>
+    <ClInclude Include="qc_wifi.h">
+      <Filter>Communication</Filter>
+    </ClInclude>
+    <ClInclude Include="qc_longTimer.h">
+      <Filter>Control</Filter>
+    </ClInclude>
+    <ClInclude Include="qc_sonar.h">
+      <Filter>Sensors</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

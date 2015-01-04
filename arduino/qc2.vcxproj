@@ -73,6 +73,7 @@
     </None>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Average.h" />
     <ClInclude Include="LSM9DS0_AHRS.h" />
     <ClInclude Include="qc_data.h" />
     <ClInclude Include="qc_dataTypes.h" />
@@ -81,6 +82,7 @@
     <ClInclude Include="qc_longTimer.h">
       <FileType>CppCode</FileType>
     </ClInclude>
+    <ClInclude Include="qc_sonar.h" />
     <ClInclude Include="qc_sysCtrl.h" />
     <ClInclude Include="qc_wifi.h" />
     <ClInclude Include="Visual Micro\.arduino.vsarduino.h" />
@@ -92,6 +94,7 @@
     <ClCompile Include="LSM9DS0_AHRS.cpp" />
     <ClCompile Include="qc_imu.cpp" />
     <ClCompile Include="qc_longTimer.cpp" />
+    <ClCompile Include="qc_sonar.cpp" />
     <ClCompile Include="qc_wifi.cpp" />
     <ClCompile Include="qc_sysCtrl.cpp" />
   </ItemGroup>

@@ -14,8 +14,13 @@
 #define WIFI_MSG_LENGTH 256
 #define WIFI_BUFFER_SIZE 256
 
-#define WIFI_DEBUG true
+#define WIFI_DEBUG false
+
+#define QC_WIFI_WRITE_CYCLE	100
+#define QC_WIFI_READ_CYCLE	2000
+#define QC_WIFI_MSG_CYCLE	10
 
 uint16_t wifi_setup();
-msg_t wifi_thread_method(void *arg);
+msg_t wifiWrite_thread_method(void *arg);
+msg_t wifiRead_thread_method(void *arg);
 void wifi_sendMsg(String msg);

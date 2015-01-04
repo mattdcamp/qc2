@@ -1,6 +1,6 @@
 #include "qc_longTimer.h"
-#include "qc_dataTypes.h"
 #include "qc_data.h"
+#include "qc_logger.h"
 
 static Semaphore attitude_sem;
 static qc_attitude_t attitude;
@@ -18,7 +18,7 @@ static Semaphore motorState_sem;
 static qc_motorState motorState;
 
 void setupData() {
-	Serial.println("Data: Setup");
+	logger_println("DATA: Setup...", QC_LOG_INFO);
 	chSemInit(&attitude_sem, 1);
 	setAttitude(0, 0, 0);
 
@@ -26,13 +26,14 @@ void setupData() {
 	setPosition(0, 0, 0, 0);
 
 	chSemInit(&health_sem, 1);
-	setGpsHealth(0, 0, 0, 0);
+	setHealth(0, 0, 0, 0);
 
 	chSemInit(&command_sem, 1);
-	setCommand(0, 0);
+	setCommand(0, 0, 0, 0, 0);
 
 	chSemInit(&motorState_sem, 1);
 	setMotorState(0, 0, 0, 0);
+	logger_println("DATA: Ready!", QC_LOG_INFO);
 }
 
 // Methods for working with Attitude
@@ -50,12 +51,18 @@ void setAttitude(float pitch, float roll, float heading) {
 	attitude.roll = roll;
 	attitude.heading = heading;
 	chSemSignal(&attitude_sem);
+	
+	logger_print("DATA: Setting Attitude: ", QC_DATA_LOG_LEVEL);
+	logger_strPrintln(attitude2Csv(), QC_DATA_LOG_LEVEL);
 }
 
 void setAttitude(float height) {
 	chSemWait(&attitude_sem);
 	attitude.height = height;
 	chSemSignal(&attitude_sem);
+
+	logger_print("DATA: Setting Attitude: ", QC_DATA_LOG_LEVEL);
+	logger_strPrintln(attitude2Csv(), QC_DATA_LOG_LEVEL);
 }
 
 String attitude2Csv() {
@@ -96,6 +103,9 @@ void setPosition(double lat, double lng, double course, double altitiude) {
 	position.longitude = lng;
 	position.course = course;
 	chSemSignal(&position_sem);
+
+	logger_print("DATA: Setting Position: ", QC_DATA_LOG_LEVEL);
+	logger_strPrintln(postion2Csv(), QC_DATA_LOG_LEVEL);
 }
 
 String postion2Csv() {
@@ -122,7 +132,7 @@ String postion2Csv() {
 
 
 // Functions to do with GPS Health
-qc_gpsHealth getGpsHeath() {
+qc_gpsHealth getHealth() {
 	qc_gpsHealth health;
 	chSemWait(&health_sem);
 	health = gpsHealth;
@@ -130,17 +140,20 @@ qc_gpsHealth getGpsHeath() {
 	return health;
 }
 
-void setGpsHealth(uint32_t fix, uint32_t failure, uint32_t success, uint32_t satellites) {
+void setHealth(uint32_t fix, uint32_t failure, uint32_t success, uint32_t satellites) {
 	chSemWait(&health_sem);
 	gpsHealth.fix = fix;
 	gpsHealth.failure = failure;
 	gpsHealth.success = success;
 	gpsHealth.satellites = satellites;
 	chSemSignal(&health_sem);
+
+	logger_print("DATA: Setting Health: ", QC_DATA_LOG_LEVEL);
+	logger_strPrintln(health2Csv(), QC_DATA_LOG_LEVEL);
 }
 
-String heath2Csv() {
-	qc_gpsHealth health = getGpsHeath();
+String health2Csv() {
+	qc_gpsHealth health = getHealth();
 	String output;
 	output += "gps,";
 
@@ -170,10 +183,13 @@ qc_flightCommand getCommand() {
 	return cmd;
 }
 
-void setCommand(uint16_t throttle, float heading) {
+void setCommand(float pitch, float roll, float heading, float height, float thrust) {
 	chSemWait(&command_sem);
-	command.throttle = throttle;
+	command.pitch = pitch;
+	command.roll = roll;
 	command.heading = heading;
+	command.height = height;
+	command.thrust = thrust;
 	chSemSignal(&command_sem);
 }
 
@@ -182,10 +198,19 @@ String command2Csv() {
 	String output;
 	output += "cmd,";
 
-	output += String(cmd.throttle);
+	output += String(cmd.pitch);
+	output += ',';
+
+	output += String(cmd.roll);
 	output += ',';
 
 	output += String(cmd.heading, 6);
+	output += ',';
+
+	output += String(cmd.height);
+	output += ',';
+
+	output += String(cmd.thrust);
 	output += ',';
 
 	output += String(longTimer_getTime());
@@ -209,6 +234,9 @@ void setMotorState(uint16_t m1, uint16_t m2, uint16_t m3, uint16_t m4) {
 	motorState.m3 = m3;
 	motorState.m4 = m4;
 	chSemSignal(&motorState_sem);
+
+	logger_print("DATA: Setting Motor: ", QC_DATA_LOG_LEVEL);
+	logger_strPrintln(motorState2Csv(), QC_DATA_LOG_LEVEL);
 }
 
 String motorState2Csv() {
