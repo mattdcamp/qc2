@@ -9,7 +9,7 @@ var LISTEN_PORT = 4242;
     console.log("Server listing on: " + LISTEN_HOST + ":" + LISTEN_PORT);
     server.on('connection', function (sock) {
         console.log('CONNECTED: ' + sock.remoteAddress + ':' + sock.remotePort);
-        
+
         var handleChange = function() {
             var msg = window.commandModel.toCsv();
             console.log('Sending: ' + msg);
@@ -58,10 +58,10 @@ var LISTEN_PORT = 4242;
                 }
             }
         });
-        
+
         sock.on('close', function (data) {
             window.commandModel.off('change', handleChange);
-            
+
             console.log('connection lost. Listing for reconnect');
             server.listen(LISTEN_PORT, LISTEN_HOST);
         });

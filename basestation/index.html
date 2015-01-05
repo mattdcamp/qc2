@@ -27,7 +27,7 @@
     <script type="text/javascript">
         require('nw.gui').Window.get().showDevTools();
     </script>
-    
+
     <script type="text/javascript" src="bower_components/jquery/dist/jquery.js"></script>
     <script type="text/javascript" src="bower_components/underscore-amd/underscore.js"></script>
     <script type="text/javascript" src="bower_components/backbone-amd/backbone.js"></script>
@@ -35,7 +35,7 @@
     <script type="text/javascript" src="bower_components/highcharts-release/highcharts.src.js"></script>
     <script type="text/javascript" src="bower_components/jquery-flight-indicators/js/jquery.flightindicators.js"></script>
     <script type="text/javascript" src="bower_components/handlebars/handlebars.js"></script>
-    
+
     <script id="commanderTemplate" type="text/x-handlebars-template">
         <form id="commanderForm">
             <div class="row">
@@ -45,11 +45,17 @@
                     <div class="row">
                         <div class="form-group col-xs-12 col-md-6">
                             <label for="pitch">Pitch</label>
-                            <input type="text" class="form-control" id="pitch" name="pitch" placeholder="degrees">
+                            <div class="input-group">
+                                <input type="text" class="form-control" id="pitch" name="pitch" autocomplete="off" placeholder="{{pitch}}">
+                                <span class="input-group-addon">degrees</span>
+                            </div>
                         </div>
                         <div class="form-group col-xs-12 col-md-6">
                             <label for="roll">Roll</label>
-                            <input type="text" class="form-control" id="roll" name="roll" placeholder="degrees">
+                            <div class="input-group">
+                                <input type="text" class="form-control" id="roll" name="roll" autocomplete="off" placeholder="{{roll}}">
+                                <span class="input-group-addon">degrees</span>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -57,7 +63,10 @@
                     <div id="headingSensor" class="sensor"></div>
                     <h3 class="sensorHeading">Heading</h3>
                     <label for="heading">Heading</label>
-                    <input type="text" class="form-control" id="heading" name="heading" placeholder="degrees">
+                    <div class="input-group">
+                        <input type="text" class="form-control" id="heading" name="heading" autocomplete="off" placeholder="{{heading}}">
+                        <span class="input-group-addon">degrees</span>
+                    </div>
                 </div>
                 <div class="col-xs-12 col-sm-4 sensorContainer">
                     <div id="altitidueSensor" class="sensor"></div>
@@ -65,11 +74,17 @@
                     <div class="row">
                         <div class="form-group col-xs-12 col-md-6">
                             <label for="height">Altitude</label>
-                            <input type="text" class="form-control" id="height" name="height" placeholder="cm">
+                            <div class="input-group">
+                                <input type="text" class="form-control" id="height" name="height" autocomplete="off" placeholder="{{height}}">
+                                <span class="input-group-addon">cm</span>
+                            </div>
                         </div>
                         <div class="form-group col-xs-12 col-md-6">
                             <label for="thurst">Thrust (%)</label>
-                            <input type="text" class="form-control" id="thrust" name="thrust" placeholder="%">
+                            <div class="input-group">
+                              <input type="text" class="form-control" id="thrust" name="thrust" autocomplete="off" placeholder="{{thrust}}">
+                              <span class="input-group-addon">%</span>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -81,7 +96,7 @@
             </div>
         </form>
     </script>
-    
+
     <script type="text/javascript">
          $(document).ready(function () {
              Handlebars.templates = {};
@@ -90,10 +105,10 @@
              Handlebars.templates.commander = template;
         });
     </script>
-    
+
     <script type="text/javascript" src="models/commandModel.js"></script>
     <script type="text/javascript" src="models/attitudeModel.js"></script>
-    <script type="text/javascript" src="models/gpsModel.js"></script> 
+    <script type="text/javascript" src="models/gpsModel.js"></script>
     <script type="text/javascript" src="controller/radio.js"></script>
     <script type="text/javascript" src="views/chartView.js"></script>
     <script type="text/javascript" src="views/commander.js"></script>
