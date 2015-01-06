@@ -79,6 +79,7 @@
     <ClInclude Include="qc_dataTypes.h" />
     <ClInclude Include="qc_gps.h" />
     <ClInclude Include="qc_imu.h" />
+    <ClInclude Include="qc_logger.h" />
     <ClInclude Include="qc_longTimer.h">
       <FileType>CppCode</FileType>
     </ClInclude>
@@ -93,6 +94,7 @@
     <ClCompile Include="qc_gps.cpp" />
     <ClCompile Include="LSM9DS0_AHRS.cpp" />
     <ClCompile Include="qc_imu.cpp" />
+    <ClCompile Include="qc_logger.cpp" />
     <ClCompile Include="qc_longTimer.cpp" />
     <ClCompile Include="qc_sonar.cpp" />
     <ClCompile Include="qc_wifi.cpp" />

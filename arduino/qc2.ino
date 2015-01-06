@@ -15,8 +15,6 @@
 #include "qc_longTimer.h"
 #include "qc_logger.h"
 
-#define THREAD_DEBUG true
-
 static WORKING_AREA(debug_thread, 64);
 static WORKING_AREA(ctrl_thread, 1024);
 static WORKING_AREA(imu_thread, 1024);
@@ -24,7 +22,8 @@ static WORKING_AREA(sonar_thread, 1024);
 //static WORKING_AREA(gps_thread, 1024);
 static WORKING_AREA(wifiWrite_thread, 1024);
 static WORKING_AREA(wifiRead_thread, 1024);
-static WORKING_AREA(longTimer_thread, 64);
+
+static char* states[] = { THD_STATE_NAMES };
 
 void printThreadInfo() {
 	logger_print("debug:", QC_THREAD_LOG_LEVEL);
@@ -39,68 +38,68 @@ void printThreadInfo() {
 	logger_strPrint(String(chUnusedStack(wifiWrite_thread, sizeof(wifiWrite_thread))), QC_THREAD_LOG_LEVEL);
 	logger_print(" wifiRead:", QC_THREAD_LOG_LEVEL);
 	logger_strPrint(String(chUnusedStack(wifiRead_thread, sizeof(wifiRead_thread))), QC_THREAD_LOG_LEVEL);
-	logger_print(" longTimer:", QC_THREAD_LOG_LEVEL);
-	logger_strPrint(String(chUnusedStack(longTimer_thread, sizeof(longTimer_thread))), QC_THREAD_LOG_LEVEL);
 	logger_print(" main:", QC_THREAD_LOG_LEVEL);
-	logger_strPrintln(String(chUnusedHeapMain()), QC_THREAD_LOG_LEVEL);
-	logger_println("-------", QC_THREAD_LOG_LEVEL);
-	Thread* t = chRegFirstThread();
-	while (t) {
-		const char* name = chRegGetThreadName(t);
-		uint8_t state = t->p_state;
-		logger_strPrint(String(name), QC_THREAD_LOG_LEVEL);
-		logger_print(":", QC_THREAD_LOG_LEVEL);
-		logger_strPrint(String(state), QC_THREAD_LOG_LEVEL);
-		logger_print(" ", QC_THREAD_LOG_LEVEL);
-		t = chRegNextThread(t);
-	}
-	Serial.println();
+	logger_strPrint(String(chUnusedHeapMain()), QC_THREAD_LOG_LEVEL);
+	
+	logger_print(" -- ", QC_THREAD_LOG_LEVEL);
 
+	Thread* tp = chRegFirstThread();
+	while (tp) {
+		String name = String(tp->p_name);
+		String state = states[tp->p_state];
+		tp = chRegNextThread(tp);
+
+		logger_strPrint(name, QC_THREAD_LOG_LEVEL);
+		logger_print(":", QC_THREAD_LOG_LEVEL);
+		logger_strPrint(state, QC_THREAD_LOG_LEVEL);
+		logger_print(" ", QC_THREAD_LOG_LEVEL);
+	}
+	logger_println("", QC_THREAD_LOG_LEVEL);
 }
 
 msg_t debug_thread_method(void *arg) {
 	chRegSetThreadName("Debug");
 	while (!chThdShouldTerminate()) {
 		printThreadInfo();
-		chThdSleepSeconds(10);
+		chThdSleepSeconds(2);
 	}
 }
 
 void loop() {}
 
 void mainThread() {
-	const tprio_t ctrlPrio = NORMALPRIO + 100;
-	const tprio_t sensorPrio = ctrlPrio - 10;
-	const tprio_t communicationPrio = sensorPrio;
-
-	chThdCreateStatic(longTimer_thread, sizeof(longTimer_thread), ctrlPrio + 10, longTimer_thread_method, NULL);
-	chThdCreateStatic(debug_thread, sizeof(debug_thread), NORMALPRIO - 100, debug_thread_method, NULL);
-	chThdCreateStatic(ctrl_thread, sizeof(ctrl_thread), ctrlPrio, controlThread_method, NULL);
-	chThdCreateStatic(imu_thread, sizeof(imu_thread), sensorPrio, imu_thread_method, NULL);
-	chThdCreateStatic(sonar_thread, sizeof(sonar_thread), sensorPrio, sonar_thread_method, NULL);
-//	chThdCreateStatic(gps_thread, sizeof(gps_thread), sensorPrio, gps_thread_method, NULL);	 
-	chThdCreateStatic(wifiWrite_thread, sizeof(wifiWrite_thread), communicationPrio, wifiWrite_thread_method, NULL);
-	chThdCreateStatic(wifiRead_thread, sizeof(wifiRead_thread), communicationPrio, wifiRead_thread_method, NULL);
-}
-
-void setup()
-{
 	logger_setup();
-
 	setupData();
-
 	imu_setup();
 	sonar_setup();
 //	gps_setup();
 	wifi_setup();
 	longTimer_setup();
 
+	uint8_t sensorPrio = NORMALPRIO + 10;
+	uint8_t communicationPrio = sensorPrio - 5;
+	uint8_t cmdPrio = sensorPrio + 5;
+	chThdCreateStatic(debug_thread, sizeof(debug_thread), cmdPrio + 1, debug_thread_method, NULL);
+	chThdCreateStatic(ctrl_thread, sizeof(ctrl_thread), cmdPrio, controlThread_method, NULL);
+	chThdCreateStatic(imu_thread, sizeof(imu_thread), sensorPrio, imu_thread_method, NULL);
+	chThdCreateStatic(sonar_thread, sizeof(sonar_thread), sensorPrio, sonar_thread_method, NULL);
+//	chThdCreateStatic(gps_thread, sizeof(gps_thread), sensorPrio, gps_thread_method, NULL);	 
+	chThdCreateStatic(wifiWrite_thread, sizeof(wifiWrite_thread), communicationPrio, wifiWrite_thread_method, NULL);
+	chThdCreateStatic(wifiRead_thread, sizeof(wifiRead_thread), communicationPrio, wifiRead_thread_method, NULL);
+
+	while (true) {}
+}
+
+void setup()
+{
 	chBegin(mainThread);
 }
 
 msg_t controlThread_method(void *arg) {
+	chRegSetThreadName("Control");
 	while (!chThdShouldTerminate()) {
-		wifi_sendMsg(attitude2Csv());
+		String csv = attitude2Csv();
+		wifi_sendMsg(csv);
 //		wifi_sendMsg(postion2Csv());
 //		wifi_sendMsg(gpsHeath2Csv());
 		wifi_sendMsg(command2Csv());

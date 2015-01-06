@@ -33,9 +33,14 @@ void imu_setup() {
 msg_t imu_thread_method(void *arg) {
 	chRegSetThreadName("IMU");
 	while (!chThdShouldTerminate()) {
+		uint32_t start = MS2ST(chTimeNow());
 		logger_println("IMU: Start", QC_LOG_VERBOSE);
 		imuUpdate();
 		logger_println("IMU: End", QC_LOG_VERBOSE);
+		uint32_t end = MS2ST(chTimeNow());
+		uint32_t t = end - start;
+		logger_print("IMU: Update Time: ", QC_THREAD_TIME_LOG_LEVEL);
+		logger_strPrintln(String(t), QC_THREAD_TIME_LOG_LEVEL);
 		chThdSleepMilliseconds(QC_IMU_MS);
 	}
 	logger_println("IMU: Exiting THREAD", QC_LOG_ERROR);

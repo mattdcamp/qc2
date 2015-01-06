@@ -29,6 +29,6 @@ msg_t gps_thread_method(void *arg) {
 		setPosition(gps.location.lat(), gps.location.lng(), gps.course.deg(), gps.altitude.meters());
 		setHealth(gps.sentencesWithFix(), gps.failedChecksum(), gps.passedChecksum(), gps.satellites.value());
 		logger_println("GPS: End", QC_LOG_VERBOSE);
-		chThdSleepMilliseconds(QC_GPS_MS);
+		chThdYield();
 	}
 }

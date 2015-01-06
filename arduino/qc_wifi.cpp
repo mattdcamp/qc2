@@ -7,7 +7,8 @@
 #include "qc_wifi.h"
 #include "qc_logger.h"
 
-static Semaphore wifi_sem;
+static Mutex wifi_mutex;
+static Mutex wifi_buffer_mutex;
 Adafruit_CC3000 wifi = Adafruit_CC3000(WIFI_CS, WIFI_IRQ, WIFI_VBAT, SPI_CLOCK_DIVIDER);
 Adafruit_CC3000_Client connection;
 
@@ -20,7 +21,8 @@ static boolean hasMsgToWrite();
 static uint8_t updateIndex(uint8_t i);
 
 uint16_t wifi_setup() {
-	chSemInit(&wifi_sem, 1);
+	chMtxInit(&wifi_mutex);
+	chMtxInit(&wifi_buffer_mutex);
 
 	msgBuffer = (char**)calloc(WIFI_BUFFER_SIZE, sizeof(char*));
 	writeMsgIndex = 0;
@@ -58,14 +60,29 @@ msg_t wifiWrite_thread_method(void *arg) {
 		logger_println("WifiWrite: Start", QC_LOG_VERBOSE);
 		while (hasMsgToWrite()) {
 			logger_println("WifiWrite: Has Message", QC_WIFI_WRITE_LOG_LEVEL);
-			char* msg = msgBuffer[readMsgIndex];
+			
+			char* msg = (char*)calloc(sizeof(char), 150);
+
+			chMtxLock(&wifi_buffer_mutex);
+			char* msgFromBuff = msgBuffer[readMsgIndex];
+			strcpy(msg, msgFromBuff);
+			free(msgFromBuff);
 			readMsgIndex = updateIndex(readMsgIndex);
-			writeMessage(msg);
+			chMtxUnlock();
+
+			if (strlen(msg)) {
+				chMtxLock(&wifi_mutex);
+				writeMessage(msg);
+				chMtxUnlock();
+			}
+
 			free(msg);
+
+			logger_println("WifiWrite: End", QC_LOG_VERBOSE);
 			chThdSleepMilliseconds(QC_WIFI_MSG_CYCLE);
 		}
 		logger_println("WifiWritee: End", QC_LOG_VERBOSE);
-		chThdSleepMilliseconds(QC_WIFI_WRITE_CYCLE);
+		chThdYield();
 	}
 	logger_println("WifiWrite: Exiting THREAD", QC_LOG_ERROR);
 }
@@ -73,9 +90,10 @@ msg_t wifiWrite_thread_method(void *arg) {
 msg_t wifiRead_thread_method(void *arg) {
 	chRegSetThreadName("WifiRead");
 	while (!chThdShouldTerminate()) {
+		
 		logger_println("WifiRead: Start", QC_LOG_VERBOSE);
-		chSemWait(&wifi_sem);
 		if (connection.connected() && connection.available()) {
+			chMtxLock(&wifi_mutex);
 			char* msg = (char*)calloc(256, sizeof(char));
 			for (uint8_t i = 0; connection.available(); i++) {
 				char c = connection.read();
@@ -84,6 +102,7 @@ msg_t wifiRead_thread_method(void *arg) {
 					break;
 				}
 			}
+			chMtxUnlock();
 
 			logger_print("WifiRead: Received: ", QC_WIFI_READ_LOG_LEVEL);
 			logger_println(msg, QC_WIFI_READ_LOG_LEVEL);
@@ -105,10 +124,10 @@ msg_t wifiRead_thread_method(void *arg) {
 				float thrust = atof(values[5]);
 				setCommand(pitch, roll, heading, height, thrust);
 			}
+			free(msg);
 		}
-		chSemSignal(&wifi_sem);
 		logger_println("WifiRead: End", QC_LOG_VERBOSE);
-		chThdSleepMilliseconds(QC_WIFI_READ_CYCLE);
+		chThdYield();
 	}
 	logger_println("WIFI READ: Exiting THREAD", QC_LOG_ERROR);
 }
@@ -117,7 +136,8 @@ void wifi_sendMsg(String msgStr) {
 	uint8_t length = msgStr.length() + 1;
 	char* msg = (char*)calloc(length, sizeof(char));
 	msgStr.toCharArray(msg, length);
-
+	
+	chMtxLock(&wifi_buffer_mutex);
 	msgBuffer[writeMsgIndex] = msg;
 
 	writeMsgIndex = updateIndex(writeMsgIndex);
@@ -125,17 +145,16 @@ void wifi_sendMsg(String msgStr) {
 		free(msgBuffer[readMsgIndex]);
 		readMsgIndex = updateIndex(writeMsgIndex);
 	}
+	chMtxUnlock();
 }
 
 static void writeMessage(char* msg) {
-	chSemWait(&wifi_sem);
 	if (connection.connected()) {
 		connection.write(msg, strlen(msg));
 
 		logger_print("WIFI Send: ", QC_WIFI_WRITE_LOG_LEVEL);
 		logger_println(msg, QC_WIFI_WRITE_LOG_LEVEL);
 	}
-	chSemSignal(&wifi_sem);
 }
 
 static boolean hasMsgToWrite() {

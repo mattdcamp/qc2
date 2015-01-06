@@ -54,6 +54,9 @@
     <ClCompile Include="qc_sonar.cpp">
       <Filter>Sensors</Filter>
     </ClCompile>
+    <ClCompile Include="qc_logger.cpp">
+      <Filter>Data</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Visual Micro\.qc2.vsarduino.h">
@@ -91,6 +94,9 @@
     </ClInclude>
     <ClInclude Include="qc_sonar.h">
       <Filter>Sensors</Filter>
+    </ClInclude>
+    <ClInclude Include="qc_logger.h">
+      <Filter>Data</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

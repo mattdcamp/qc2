@@ -1,4 +1,4 @@
-#define QC_SONAR_MS				10
+#define QC_SONAR_MS				100
 #define QC_SONAR_SAMPLES		10
 
 #define QC_HEIGHT_PIN			12

@@ -16,9 +16,7 @@
 
 #define WIFI_DEBUG false
 
-#define QC_WIFI_WRITE_CYCLE	100
-#define QC_WIFI_READ_CYCLE	2000
-#define QC_WIFI_MSG_CYCLE	10
+#define QC_WIFI_MSG_CYCLE	100
 
 uint16_t wifi_setup();
 msg_t wifiWrite_thread_method(void *arg);
