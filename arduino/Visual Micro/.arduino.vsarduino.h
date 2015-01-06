@@ -64,8 +64,6 @@ extern "C" void __cxa_pure_virtual() {;}
 #include "E:\src\qc2\arduino\qc_imu.h"
 #include "E:\src\qc2\arduino\qc_logger.cpp"
 #include "E:\src\qc2\arduino\qc_logger.h"
-#include "E:\src\qc2\arduino\qc_longTimer.cpp"
-#include "E:\src\qc2\arduino\qc_longTimer.h"
 #include "E:\src\qc2\arduino\qc_sonar.cpp"
 #include "E:\src\qc2\arduino\qc_sonar.h"
 #include "E:\src\qc2\arduino\qc_sysCtrl.cpp"

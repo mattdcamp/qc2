@@ -33,7 +33,7 @@ var LISTEN_PORT = 4242;
                         roll: parseFloat(arr[2]),
                         heading: parseFloat(arr[3]),
                         height: parseFloat(arr[4]),
-                        time: parseInt(arr[5])
+                        time: Date.now()
                     });
                     break;
                 case 'gps':
@@ -41,7 +41,7 @@ var LISTEN_PORT = 4242;
                         lat: parseFloat(arr[1]),
                         lng: parseFloat(arr[2]),
                         altitude: parseFloat(arr[3]),
-                        time: parseInt(arr[4])
+                        time: Date.now()
                     });
                     break;
                 case 'cmd':

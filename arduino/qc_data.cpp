@@ -1,4 +1,5 @@
-#include "qc_longTimer.h"
+#include <ChibiOS_ARM\ChibiOS_ARM.h>
+
 #include "qc_data.h"
 #include "qc_logger.h"
 
@@ -27,6 +28,7 @@ void setupData() {
 	chMtxInit(&motor_mutex);
 
 	logger_println("DATA: Ready!", QC_LOG_INFO);
+
 }
 
 // Methods for working with Attitude
@@ -68,9 +70,6 @@ String attitude2Csv() {
 	output += ",";
 
 	output += String(a.height, 10);
-	output += ",";
-
-	output += String(longTimer_getTime());
 
 	return output;
 }
@@ -107,9 +106,6 @@ String postion2Csv() {
 	output += ',';
 
 	output += String(position.course, 6);
-	output += ",";
-
-	output += String(longTimer_getTime());
 
 	return output;
 }
@@ -148,9 +144,6 @@ String health2Csv() {
 	output += ',';
 
 	output += String(health.satellites);
-	output += ',';
-
-	output += String(longTimer_getTime());
 
 	return output;
 }
@@ -192,9 +185,6 @@ String command2Csv() {
 	output += ',';
 
 	output += String(cmd.thrust);
-	output += ',';
-
-	output += String(longTimer_getTime());
 
 	return output;
 }
@@ -232,9 +222,6 @@ String motorState2Csv() {
 	output += ',';
 
 	output += String(mc.m4);
-	output += ',';
-
-	output += String(longTimer_getTime());
 
 	return output;
 }

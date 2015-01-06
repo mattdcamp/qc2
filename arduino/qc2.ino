@@ -12,7 +12,6 @@
 #include "qc_sonar.h"
 //#include "qc_gps.h"
 #include "qc_wifi.h"
-#include "qc_longTimer.h"
 #include "qc_logger.h"
 
 static WORKING_AREA(debug_thread, 64);
@@ -74,7 +73,6 @@ void mainThread() {
 	sonar_setup();
 //	gps_setup();
 	wifi_setup();
-	longTimer_setup();
 
 	uint8_t sensorPrio = NORMALPRIO + 10;
 	uint8_t communicationPrio = sensorPrio - 5;

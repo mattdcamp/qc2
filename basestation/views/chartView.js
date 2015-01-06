@@ -31,11 +31,9 @@
                 },
                 xAxis: {
                     title: {
-                        text: 'System Seconds'
+                        text: 'Time'
                     },
-                    type: 'linear',
-                    min: 0,
-                    floor: 0
+                    type: 'datetime'
                 },
                 yAxis: {
                     title: {
@@ -147,11 +145,9 @@
                 },
                 xAxis: {
                     title: {
-                        text: 'System Seconds'
+                        text: 'Time'
                     },
-                    type: 'linear',
-                    min: 0,
-                    floor: 0
+                    type: 'datetime'
                 },
                 yAxis: {
                     title: {
