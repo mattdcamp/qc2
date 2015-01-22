@@ -13,15 +13,15 @@ qc_position_t getPosition();
 void setPosition(double lat, double lng, double course, double altitiude);
 String postion2Csv();
 
-qc_gpsHealth getHealth();
+qc_gpsHealth_t getHealth();
 void setHealth(uint32_t fix, uint32_t failure, uint32_t success, uint32_t satellites);
 String health2Csv();
 
-qc_flightCommand getCommand();
+qc_flightCommand_t getCommand();
 void setCommand(float pitch, float roll, float heading, float height, float thrust);
 String command2Csv();
 
 
-qc_motorState getMotorState();
+qc_motorState_t getMotorState();
 void setMotorState(uint16_t m1, uint16_t m2, uint16_t m3, uint16_t m4);
 String motorState2Csv();

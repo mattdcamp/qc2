@@ -30,7 +30,7 @@ typedef struct {
 	uint32_t failure;
 	uint32_t success;
 	uint32_t satellites;
-} qc_gpsHealth;
+} qc_gpsHealth_t;
 
 /**
 *	This structure holds all the information about commands being sent to the craft.
@@ -42,7 +42,7 @@ typedef struct {
 	float heading;
 	float height;
 	float thrust;
-} qc_flightCommand;
+} qc_flightCommand_t;
 
 
 typedef struct {
@@ -50,4 +50,4 @@ typedef struct {
 	uint16_t m2;
 	uint16_t m3;
 	uint16_t m4;
-} qc_motorState;
+} qc_motorState_t;

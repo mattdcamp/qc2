@@ -10,13 +10,13 @@ static Mutex position_mutex;
 static qc_position_t position = {};
 
 static Mutex health_mutex;
-static qc_gpsHealth gpsHealth = {};
+static qc_gpsHealth_t gpsHealth = {};
 
 static Mutex command_mutex;
-static qc_flightCommand command = {};
+static qc_flightCommand_t command = {};
 
 static Mutex motor_mutex;
-static qc_motorState motorState = {};
+static qc_motorState_t motorState = {};
 
 void setupData() {
 	logger_println("DATA: Setup...", QC_LOG_INFO);
@@ -112,8 +112,8 @@ String postion2Csv() {
 
 
 // Functions to do with GPS Health
-qc_gpsHealth getHealth() {
-	qc_gpsHealth health;
+qc_gpsHealth_t getHealth() {
+	qc_gpsHealth_t health;
 	chMtxLock(&health_mutex);
 	health = gpsHealth;
 	chMtxUnlock();
@@ -130,7 +130,7 @@ void setHealth(uint32_t fix, uint32_t failure, uint32_t success, uint32_t satell
 }
 
 String health2Csv() {
-	qc_gpsHealth health = getHealth();
+	qc_gpsHealth_t health = getHealth();
 	String output;
 	output += "gps,";
 
@@ -149,8 +149,8 @@ String health2Csv() {
 }
 
 // Functions to do with Commands
-qc_flightCommand getCommand() {
-	qc_flightCommand cmd;
+qc_flightCommand_t getCommand() {
+	qc_flightCommand_t cmd;
 	chMtxLock(&command_mutex);
 	cmd = command;
 	chMtxUnlock();
@@ -168,7 +168,7 @@ void setCommand(float pitch, float roll, float heading, float height, float thru
 }
 
 String command2Csv() {
-	qc_flightCommand cmd = getCommand();
+	qc_flightCommand_t cmd = getCommand();
 	String output;
 	output += "cmd,";
 
@@ -190,8 +190,8 @@ String command2Csv() {
 }
 
 // Functions to do with the state of the motors
-qc_motorState getMotorState() {
-	qc_motorState mc;
+qc_motorState_t getMotorState() {
+	qc_motorState_t mc;
 	chMtxLock(&motor_mutex);
 	mc = motorState;
 	chMtxUnlock();
@@ -208,7 +208,7 @@ void setMotorState(uint16_t m1, uint16_t m2, uint16_t m3, uint16_t m4) {
 }
 
 String motorState2Csv() {
-	qc_motorState mc = getMotorState();
+	qc_motorState_t mc = getMotorState();
 	String output;
 	output += "motor,";
 
