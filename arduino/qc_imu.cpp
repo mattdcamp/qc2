@@ -59,8 +59,8 @@ static void imuUpdateTime(float dt) {
 
 	qc_attitude_t attitude;
 	attitude.pitch = -ahrs->pitch;
-	attitude.roll = ahrs->roll;
-	attitude.heading = ahrs->yaw;
+	attitude.roll = -ahrs->roll;
+	attitude.heading = -ahrs->yaw;
 
 	pushSampleToBuffer(attitude);
 	setAttitude(pitchAvg.mean(), rollAvg.mean(), headingAvg.mean());

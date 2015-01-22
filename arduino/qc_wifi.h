@@ -6,8 +6,8 @@
 
 // Pin setup for the wifi
 #define WIFI_IRQ   24
-#define WIFI_VBAT  22
-#define WIFI_CS    26
+#define WIFI_VBAT  26
+#define WIFI_CS    22
 
 #define IDLE_TIMEOUT_MS  3000
 
