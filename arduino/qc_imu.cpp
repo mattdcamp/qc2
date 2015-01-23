@@ -47,7 +47,9 @@ msg_t imu_thread_method(void *arg) {
 }
 
 static void imuUpdate() {
-	float dt = (float)getDeltaTime() * 0.001f;
+	uint32_t now = getNow();
+	float dt = (float)getDeltaTime(now, lastUpdate) * 0.001f;
+	lastUpdate = now;
 	imuUpdateTime(dt);
 }
 
@@ -70,18 +72,4 @@ static void pushSampleToBuffer(qc_attitude_t newSample) {
 	pitchAvg.push(newSample.pitch);
 	rollAvg.push(newSample.roll);
 	headingAvg.push(newSample.heading);
-}
-
-static uint32_t getDeltaTime() {
-	uint32_t now = MS2ST(chTimeNow());
-
-	uint32_t dt = 0;
-	if (now < lastUpdate) {
-		dt = now + (INT32_MAX - lastUpdate);
-	} else {
-		dt = now - lastUpdate;
-	}
-
-	lastUpdate = now;
-	return dt;
 }

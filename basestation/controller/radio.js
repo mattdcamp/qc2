@@ -24,8 +24,6 @@ var LISTEN_PORT = 4242;
                 arr = str.split(',');
                 type = arr[0];
 
-                console.log('Receiving: ' + str);
-
                 switch (type) {
                 case 'attitude':
                     window.attitudeCollection.add({
@@ -52,6 +50,14 @@ var LISTEN_PORT = 4242;
                         height: parseFloat(arr[4]),
                         thrust: parseFloat(arr[5])
                     })
+                    break;
+                case 'motor':
+                    window.motorCollection.add({
+                        m1: parseInt(arr[1]),
+                        m2: parseInt(arr[2]),
+                        m3: parseInt(arr[3]),
+                        m4: parseInt(arr[4])
+                    });
                     break;
                 default:
                     console.log('Unknown message: ' + str);

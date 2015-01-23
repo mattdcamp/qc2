@@ -225,3 +225,19 @@ String motorState2Csv() {
 
 	return output;
 }
+
+uint32_t getNow() {
+	uint32_t now = MS2ST(chTimeNow());
+	return now;
+}
+
+uint32_t getDeltaTime(uint32_t now, uint32_t then) {	
+	uint32_t dt = 0;
+	if (now < then) {
+		dt = now + (INT32_MAX - then);
+	}
+	else {
+		dt = now - then;
+	}
+	return dt;
+}

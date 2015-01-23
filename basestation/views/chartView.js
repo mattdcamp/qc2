@@ -1,21 +1,14 @@
-(function (window, $, Backbone, Highcharts, attitudeCollection, commandModelResponse, undefined) {
+(function (window, $, Backbone, Highcharts, attitudeCollection, commandModelResponse, motorCollection, undefined) {
     'use strict';
 
-    var AttitudeChart = Backbone.View.extend({
-        el: '#attitudeChart',
+    var ChartView = Backbone.View.extend({
         initialize: function () {
-            this.collection = attitudeCollection;
-            this.commandModel = commandModelResponse;
-            
+            this.setCollection();
             this.render();
-            
-            this.listenTo(this.collection, 'add', this.addPointSingle, this);
-            this.addAllPoints();
-            
-            this.listenTo(this.commandModel, 'change', this.updateCommand, this);
-            this.updateCommand(this.commandModel);
+            this.setupBindings();
         },
         render: function () {
+            var self = this;
             this.chart = new Highcharts.Chart({
                 chart: {
                     type: 'spline',
@@ -24,7 +17,7 @@
                     marginRight: 0
                 },
                 title: {
-                    text: 'Attitude'
+                    text: self.chartTitle
                 },
                 tooltip: {
                     enabled: false
@@ -37,10 +30,10 @@
                 },
                 yAxis: {
                     title: {
-                        text: 'Angle (degrees)'
+                        text: self.axisTitle
                     },
-                    min: -180,
-                    max: 180
+                    min: self.axisMin,
+                    max: self.axisMax
                 },
                 legend: {
                     enabled: true
@@ -48,7 +41,36 @@
                 exporting: {
                     enabled: false
                 },
-                series: [{
+                series: self.getSeries()
+            });
+
+            return this;
+        },
+        remove: function () {
+            this.chart.destroy();
+            this.stopListening();
+        }
+    });
+    
+    var AttitudeChart = ChartView.extend({
+        el: '#attitudeChart',
+        setCollection: function () {
+            this.collection = attitudeCollection;
+            this.commandModel = commandModelResponse;
+        },
+        setupBindings: function () {
+            this.listenTo(this.collection, 'add', this.addPointSingle, this);
+            this.addAllPoints();
+            
+            this.listenTo(this.commandModel, 'change', this.updateCommand, this);
+            this.updateCommand(this.commandModel);
+        },
+        getChartTitle: 'Attitude',
+        getAxisTitle: 'Angle (degrees)',
+        getAxisMin: -180,
+        getAxisMax: 180,
+        getSeries: function () {
+            return [{
                     id: 'pitch',
                     name: 'Pitch',
                     color: '#00ff00',
@@ -58,10 +80,7 @@
                     name: 'Roll',
                     color: '#0000ff',
                     data: []
-                }]
-            });
-
-            return this;
+                }];
         },
         addPoint: function (attitude) {
             this.chart.get('pitch').addPoint([attitude.get('time'), attitude.get('pitch')], false, false);
@@ -108,67 +127,33 @@
                 color: '#0000ff'
             });
             plotLine.render();
-        },
-        remove: function () {
-            this.chart.destroy();
-            this.stopListening();
         }
     });
     
-    var HeightChart = Backbone.View.extend({
+    var HeightChart = ChartView.extend({
         el: '#heightChart',
-        initialize: function () {
+        setCollection: function() {
             this.collection = attitudeCollection;
             this.commandModel = commandModelResponse;
-            
-            this.render();
-            
+        },
+        setupBindings: function() {
             this.listenTo(this.collection, 'add', this.addPointSingle, this);
             this.addAllPoints();
             
             this.listenTo(this.commandModel, 'change', this.updateCommand, this);
             this.updateCommand(this.commandModel);
         },
-        render: function () {
-            this.chart = new Highcharts.Chart({
-                chart: {
-                    type: 'spline',
-                    renderTo: this.$el.attr('id'),
-                    animation: Highcharts.svg, // don't animate in old IE
-                    marginRight: 0
-                },
-                title: {
-                    text: 'Height'
-                },
-                tooltip: {
-                    enabled: false
-                },
-                xAxis: {
-                    title: {
-                        text: 'Time'
-                    },
-                    type: 'datetime'
-                },
-                yAxis: {
-                    title: {
-                        text: 'Height (cm)'
-                    },
-                    min: 0,
-                    max: 800
-                },
-                legend: {
-                    enabled: true
-                },
-                exporting: {
-                    enabled: false
-                },
-                series: [{
+        getChartTitle: 'Height',
+        getAxisTitle: 'Height (cm)',
+        getAxisMin: 0,
+        getAxisMax: 800,
+        getSeries: function() {
+            return [{
                     id: 'height',
                     name: 'Height',
                     data: [],
                     color: '#ff0000'
-                }]
-            });
+                }];
         },
         addPoint: function (attitude) {
             this.chart.get('height').addPoint([attitude.get('time'), attitude.get('height')], false, false);
@@ -196,12 +181,57 @@
                 color: '#ff0000'
             });
             plotLine.render();
-        },
-        remove: function () {
-            this.chart.destroy();
-            this.stopListening();
         }
     });
+    
+    var MotorChart = ChartView.extend({
+        el: '#motorChart',
+        setCollection: function () {
+            this.collection = motorCollection;
+        },
+        setupBindings: function () {
+            this.listenTo(this.collection, 'add', this.addPointSingle, this);
+            this.addAllPoints();
+        },
+        getChartTitle: 'Motor Control',
+        getAxisTitle: 'PWM Signal (us)',
+        getAxisMin: 500,
+        getAxisMax: 2500,
+        getSeries: function () {
+            return [{
+                    id: 'm1',
+                    name: 'Motor 1',
+                    data: []
+                }, {
+                    id: 'm2',
+                    name: 'Motor 2',
+                    data: []
+                }, {
+                    id: 'm3',
+                    name: 'Motor 3',
+                    data: []
+                }, {
+                    id: 'm4',
+                    name: 'Motor 4',
+                    data: []
+                }];
+        },
+        addPoint: function (motor) {
+            this.chart.get('m1').addPoint([motor.get('time'), motor.get('m1')], false, false);
+            this.chart.get('m2').addPoint([motor.get('time'), motor.get('m2')], false, false);
+            this.chart.get('m3').addPoint([motor.get('time'), motor.get('m3')], false, false);
+            this.chart.get('m4').addPoint([motor.get('time'), motor.get('m4')], false, false);
+        },
+        addAllPoints: function () {
+            this.collection.each(this.addPoint, this);
+            this.chart.redraw();
+        },
+        addPointSingle: function (motor) {
+            this.addPoint(motor);
+            this.chart.redraw();
+        }
+    });
+    
     
     window.ChartPageView = Backbone.View.extend({
         el: '#viewContainer',
@@ -210,9 +240,10 @@
             this.render();
             this.attitudeChart = new AttitudeChart();
             this.heightChart = new HeightChart();
+            this.motorChart = new MotorChart();
         },
         render: function () {
-            this.$el.html('<div id="attitudeChart" class="col-md-12 graphContainer"></div><div id="heightChart" class="col-md-12 graphContainer"></div>');
+            this.$el.html('<div id="attitudeChart" class="col-md-6 graphContainer"></div><div id="heightChart" class="col-md-6 graphContainer"></div><div id="motorChart" class="col-md-12 graphContainer"></div>');
             
             $('.nav.navbar-nav li').removeClass('active');
             $('#charts').addClass('active');
@@ -225,4 +256,4 @@
         }
     });
 
-})(window, window.jQuery, window.Backbone, window.Highcharts, window.attitudeCollection, window.commandModelResponse);
+})(window, window.jQuery, window.Backbone, window.Highcharts, window.attitudeCollection, window.commandModelResponse, window.motorCollection);

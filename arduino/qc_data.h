@@ -25,3 +25,6 @@ String command2Csv();
 qc_motorState_t getMotorState();
 void setMotorState(uint16_t m1, uint16_t m2, uint16_t m3, uint16_t m4);
 String motorState2Csv();
+
+uint32_t getNow();
+uint32_t getDeltaTime(uint32_t now, uint32_t then);

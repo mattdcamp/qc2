@@ -13,6 +13,7 @@
 //#include "qc_gps.h"
 #include "qc_wifi.h"
 #include "qc_logger.h"
+#include "qc_pid.h"
 
 static WORKING_AREA(debug_thread, 64);
 static WORKING_AREA(ctrl_thread, 1024);
@@ -21,6 +22,7 @@ static WORKING_AREA(sonar_thread, 1024);
 //static WORKING_AREA(gps_thread, 1024);
 static WORKING_AREA(wifiWrite_thread, 1024);
 static WORKING_AREA(wifiRead_thread, 1024);
+static WORKING_AREA(pid_thread, 1024);
 
 static char* states[] = { THD_STATE_NAMES };
 
@@ -37,6 +39,8 @@ void printThreadInfo() {
 	logger_strPrint(String(chUnusedStack(wifiWrite_thread, sizeof(wifiWrite_thread))), QC_THREAD_LOG_LEVEL);
 	logger_print(" wifiRead:", QC_THREAD_LOG_LEVEL);
 	logger_strPrint(String(chUnusedStack(wifiRead_thread, sizeof(wifiRead_thread))), QC_THREAD_LOG_LEVEL);
+	logger_print(" PID:", QC_THREAD_LOG_LEVEL);
+	logger_strPrint(String(chUnusedStack(pid_thread, sizeof(pid_thread))), QC_THREAD_LOG_LEVEL);
 	logger_print(" main:", QC_THREAD_LOG_LEVEL);
 	logger_strPrint(String(chUnusedHeapMain()), QC_THREAD_LOG_LEVEL);
 	
@@ -69,6 +73,7 @@ void loop() {}
 void mainThread() {
 	logger_setup();
 	setupData();
+	pid_setup();
 	imu_setup();
 	sonar_setup();
 //	gps_setup();
@@ -77,7 +82,9 @@ void mainThread() {
 	uint8_t sensorPrio = NORMALPRIO + 10;
 	uint8_t communicationPrio = sensorPrio - 5;
 	uint8_t cmdPrio = sensorPrio + 5;
+
 	chThdCreateStatic(debug_thread, sizeof(debug_thread), cmdPrio + 1, debug_thread_method, NULL);
+	chThdCreateStatic(pid_thread, sizeof(pid_thread), cmdPrio, pid_thread_method, NULL);
 	chThdCreateStatic(ctrl_thread, sizeof(ctrl_thread), cmdPrio, controlThread_method, NULL);
 	chThdCreateStatic(imu_thread, sizeof(imu_thread), sensorPrio, imu_thread_method, NULL);
 	chThdCreateStatic(sonar_thread, sizeof(sonar_thread), sensorPrio, sonar_thread_method, NULL);
@@ -101,7 +108,7 @@ msg_t controlThread_method(void *arg) {
 //		wifi_sendMsg(postion2Csv());
 //		wifi_sendMsg(gpsHeath2Csv());
 		wifi_sendMsg(command2Csv());
-//		wifi_sendMsg(motorState2Csv());
+		wifi_sendMsg(motorState2Csv());
 
 		chThdSleepMilliseconds(500);
 	}

@@ -36,14 +36,12 @@ typedef struct {
 *	This structure holds all the information about commands being sent to the craft.
 */
 typedef struct {
-	uint8_t throttle;
 	float pitch;
 	float roll;
 	float heading;
 	float height;
 	float thrust;
 } qc_flightCommand_t;
-
 
 typedef struct {
 	uint16_t m1;

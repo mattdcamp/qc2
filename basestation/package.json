@@ -6,7 +6,7 @@
         "icon": "link.png",
         "toolbar": true,
         "frame": true,
-        "width": 800,
+        "width": 1400,
         "height": 1400,
         "position": "center"
     }
