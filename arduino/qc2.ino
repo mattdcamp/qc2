@@ -5,7 +5,7 @@
 #include <SFE_LSM9DS0.h>
 #include <Adafruit_CC3000_Library\Adafruit_CC3000.h>
 #include <math.h>
-#include <Servo\src\Servo.h>
+#include <Servo.h>
 
 #include "qc_data.h"
 #include "qc_imu.h"
@@ -14,6 +14,7 @@
 #include "qc_wifi.h"
 #include "qc_logger.h"
 #include "qc_pid.h"
+#include "qc_motor.h"
 
 static WORKING_AREA(debug_thread, 64);
 static WORKING_AREA(ctrl_thread, 1024);
@@ -23,6 +24,7 @@ static WORKING_AREA(sonar_thread, 1024);
 static WORKING_AREA(wifiWrite_thread, 1024);
 static WORKING_AREA(wifiRead_thread, 1024);
 static WORKING_AREA(pid_thread, 1024);
+static WORKING_AREA(motor_thread, 1024);
 
 static char* states[] = { THD_STATE_NAMES };
 
@@ -41,6 +43,8 @@ void printThreadInfo() {
 	logger_strPrint(String(chUnusedStack(wifiRead_thread, sizeof(wifiRead_thread))), QC_THREAD_LOG_LEVEL);
 	logger_print(" PID:", QC_THREAD_LOG_LEVEL);
 	logger_strPrint(String(chUnusedStack(pid_thread, sizeof(pid_thread))), QC_THREAD_LOG_LEVEL);
+	logger_print(" MOTOR:", QC_THREAD_LOG_LEVEL);
+	logger_strPrint(String(chUnusedStack(motor_thread, sizeof(motor_thread))), QC_THREAD_LOG_LEVEL);
 	logger_print(" main:", QC_THREAD_LOG_LEVEL);
 	logger_strPrint(String(chUnusedHeapMain()), QC_THREAD_LOG_LEVEL);
 	
@@ -74,6 +78,7 @@ void mainThread() {
 	logger_setup();
 	setupData();
 	pid_setup();
+	motor_setup();
 	imu_setup();
 	sonar_setup();
 //	gps_setup();
@@ -85,6 +90,7 @@ void mainThread() {
 
 	chThdCreateStatic(debug_thread, sizeof(debug_thread), cmdPrio + 1, debug_thread_method, NULL);
 	chThdCreateStatic(pid_thread, sizeof(pid_thread), cmdPrio, pid_thread_method, NULL);
+	chThdCreateStatic(motor_thread, sizeof(motor_thread), cmdPrio, motor_thread_method, NULL);
 	chThdCreateStatic(ctrl_thread, sizeof(ctrl_thread), cmdPrio, controlThread_method, NULL);
 	chThdCreateStatic(imu_thread, sizeof(imu_thread), sensorPrio, imu_thread_method, NULL);
 	chThdCreateStatic(sonar_thread, sizeof(sonar_thread), sensorPrio, sonar_thread_method, NULL);

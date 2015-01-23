@@ -2,6 +2,9 @@
 
 #include "qc_dataTypes.h"
 
+#define QC_MOTOR_MAX	2000
+#define QC_MOTOR_MIN	1000
+
 void setupData();
 
 qc_attitude_t getAttitude();

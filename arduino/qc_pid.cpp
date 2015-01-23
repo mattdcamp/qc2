@@ -48,7 +48,7 @@ msg_t pid_thread_method(void *arg) {
 
 		float pitch = updatePid(&pitchPid, command.pitch, attitude.pitch);
 		float roll = updatePid(&rollPid, command.roll, attitude.roll);
-		float heading = updatePid(&headingPid, command.heading, attitude.heading);
+		//float heading = updatePid(&headingPid, command.heading, attitude.heading);
 		//float thrust = updatePid(&heightPid, command.height, attitude.height);
 
 		/*
