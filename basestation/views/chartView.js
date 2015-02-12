@@ -195,8 +195,8 @@
         },
         getChartTitle: 'Motor Control',
         getAxisTitle: 'PWM Signal (us)',
-        getAxisMin: 500,
-        getAxisMax: 2500,
+        getAxisMin: -1000,
+        getAxisMax: 1000,
         getSeries: function () {
             return [{
                     id: 'm1',

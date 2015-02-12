@@ -2,6 +2,7 @@
 
 #include "qc_data.h"
 #include "qc_logger.h"
+#include "qc_pid.h"
 
 static Mutex attitude_mutex;
 static qc_attitude_t attitude = {};
@@ -165,6 +166,8 @@ void setCommand(float pitch, float roll, float heading, float height, float thru
 	command.height = height;
 	command.thrust = thrust;
 	chMtxUnlock();
+
+	resetPid();
 }
 
 String command2Csv() {

@@ -42,9 +42,6 @@
     <ClCompile Include="qc_imu.cpp">
       <Filter>Sensors</Filter>
     </ClCompile>
-    <ClCompile Include="qc_longTimer.cpp">
-      <Filter>Control</Filter>
-    </ClCompile>
     <ClCompile Include="qc_sysCtrl.cpp">
       <Filter>Control</Filter>
     </ClCompile>
@@ -56,6 +53,9 @@
     </ClCompile>
     <ClCompile Include="qc_logger.cpp">
       <Filter>Data</Filter>
+    </ClCompile>
+    <ClCompile Include="qc_pid.cpp">
+      <Filter>Control</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -89,14 +89,14 @@
     <ClInclude Include="qc_wifi.h">
       <Filter>Communication</Filter>
     </ClInclude>
-    <ClInclude Include="qc_longTimer.h">
-      <Filter>Control</Filter>
-    </ClInclude>
     <ClInclude Include="qc_sonar.h">
       <Filter>Sensors</Filter>
     </ClInclude>
     <ClInclude Include="qc_logger.h">
       <Filter>Data</Filter>
+    </ClInclude>
+    <ClInclude Include="qc_pid.h">
+      <Filter>Control</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

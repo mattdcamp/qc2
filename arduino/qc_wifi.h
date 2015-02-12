@@ -16,9 +16,9 @@
 
 #define WIFI_DEBUG false
 
+#define QC_WIFI_MSG_MS		100
 #define QC_WIFI_MSG_CYCLE	100
 
 uint16_t wifi_setup();
-msg_t wifiWrite_thread_method(void *arg);
-msg_t wifiRead_thread_method(void *arg);
+msg_t wifi_thread_method(void *arg);
 void wifi_sendMsg(String msg);

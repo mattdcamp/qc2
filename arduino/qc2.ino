@@ -14,17 +14,15 @@
 #include "qc_wifi.h"
 #include "qc_logger.h"
 #include "qc_pid.h"
-#include "qc_motor.h"
 
 static WORKING_AREA(debug_thread, 64);
 static WORKING_AREA(ctrl_thread, 1024);
 static WORKING_AREA(imu_thread, 1024);
 static WORKING_AREA(sonar_thread, 1024);
 //static WORKING_AREA(gps_thread, 1024);
-static WORKING_AREA(wifiWrite_thread, 1024);
+static WORKING_AREA(wifi_thread, 1024);
 static WORKING_AREA(wifiRead_thread, 1024);
 static WORKING_AREA(pid_thread, 1024);
-static WORKING_AREA(motor_thread, 1024);
 
 static char* states[] = { THD_STATE_NAMES };
 
@@ -37,14 +35,10 @@ void printThreadInfo() {
 	logger_strPrint(String(chUnusedStack(sonar_thread, sizeof(sonar_thread))), QC_THREAD_LOG_LEVEL);
 //	logger_print(" gps:", QC_THREAD_LOG_LEVEL);
 //	logger_print(String(chUnusedStack(gps_thread, sizeof(gps_thread))), QC_THREAD_LOG_LEVEL);
-	logger_print(" wifiWrite:", QC_THREAD_LOG_LEVEL);
-	logger_strPrint(String(chUnusedStack(wifiWrite_thread, sizeof(wifiWrite_thread))), QC_THREAD_LOG_LEVEL);
-	logger_print(" wifiRead:", QC_THREAD_LOG_LEVEL);
-	logger_strPrint(String(chUnusedStack(wifiRead_thread, sizeof(wifiRead_thread))), QC_THREAD_LOG_LEVEL);
+	logger_print(" wifi:", QC_THREAD_LOG_LEVEL);
+	logger_strPrint(String(chUnusedStack(wifi_thread, sizeof(wifi_thread))), QC_THREAD_LOG_LEVEL);
 	logger_print(" PID:", QC_THREAD_LOG_LEVEL);
 	logger_strPrint(String(chUnusedStack(pid_thread, sizeof(pid_thread))), QC_THREAD_LOG_LEVEL);
-	logger_print(" MOTOR:", QC_THREAD_LOG_LEVEL);
-	logger_strPrint(String(chUnusedStack(motor_thread, sizeof(motor_thread))), QC_THREAD_LOG_LEVEL);
 	logger_print(" main:", QC_THREAD_LOG_LEVEL);
 	logger_strPrint(String(chUnusedHeapMain()), QC_THREAD_LOG_LEVEL);
 	
@@ -90,13 +84,11 @@ void mainThread() {
 
 	chThdCreateStatic(debug_thread, sizeof(debug_thread), cmdPrio + 1, debug_thread_method, NULL);
 	chThdCreateStatic(pid_thread, sizeof(pid_thread), cmdPrio, pid_thread_method, NULL);
-	chThdCreateStatic(motor_thread, sizeof(motor_thread), cmdPrio, motor_thread_method, NULL);
 	chThdCreateStatic(ctrl_thread, sizeof(ctrl_thread), cmdPrio, controlThread_method, NULL);
 	chThdCreateStatic(imu_thread, sizeof(imu_thread), sensorPrio, imu_thread_method, NULL);
 	chThdCreateStatic(sonar_thread, sizeof(sonar_thread), sensorPrio, sonar_thread_method, NULL);
 //	chThdCreateStatic(gps_thread, sizeof(gps_thread), sensorPrio, gps_thread_method, NULL);	 
-	chThdCreateStatic(wifiWrite_thread, sizeof(wifiWrite_thread), communicationPrio, wifiWrite_thread_method, NULL);
-	chThdCreateStatic(wifiRead_thread, sizeof(wifiRead_thread), communicationPrio, wifiRead_thread_method, NULL);
+	chThdCreateStatic(wifi_thread, sizeof(wifi_thread), communicationPrio, wifi_thread_method, NULL);
 
 	while (true) {}
 }
